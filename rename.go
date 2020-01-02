@@ -21,11 +21,13 @@ func main() {
 		log.Fatal("rename-by-mdate takes the root directory path in parameter")
 	} else {
 		dirPath := os.Args[1]
-		renameFiles(dirPath)
+		currentTimeStamp := strconv.FormatInt(time.Now().UnixNano(), 10)
+
+		renameFiles(dirPath, currentTimeStamp)
 	}
 }
 
-func renameFiles(dirPath string) {
+func renameFiles(dirPath string, currentTimeStamp string) {
 	file, err := os.Open(dirPath)
 	if err != nil {
 		log.Fatalf("Failed opening directory: %s", err)
@@ -37,22 +39,27 @@ func renameFiles(dirPath string) {
 	dirName := dirPath[i+1 : len(dirPath)]
 
 	list, _ := file.Readdirnames(0) // 0 to read all files and folders
+	n := 0
 	for _, filename := range list {
-		renameFile(dirPath+pathSeparatorStr, filename, dirName+"_")
+		renameFile(dirPath+pathSeparatorStr, filename, dirName+"_", currentTimeStamp+"-"+strconv.Itoa(n))
+		n++
 	}
 }
 
-func renameFile(dirPath string, filename string, prefix string) {
+func renameFile(dirPath string, filename string, prefix string, tmpFileName string) {
 	filePath := dirPath + filename
 
 	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	fi, err := file.Stat()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
+
 	if fi.IsDir() {
 		return
 	}
@@ -63,8 +70,11 @@ func renameFile(dirPath string, filename string, prefix string) {
 	}
 	tm := time.Unix(st.Mtimespec.Sec, 0)
 	newFilename := prefix + tm.Format(timeFormat) + strings.ToLower(filepath.Ext(filePath))
+
+	os.Rename(filePath, dirPath+tmpFileName) // Rename to a temporary filename, so we are sure nameIfFileExists won't match with the file if it is already well named
+
 	newFilePath := nameIfFileExists(dirPath + newFilename)
-	os.Rename(dirPath+filename, newFilePath)
+	os.Rename(dirPath+tmpFileName, newFilePath)
 	fmt.Println(newFilePath)
 }
 
