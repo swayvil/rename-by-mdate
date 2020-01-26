@@ -20,14 +20,18 @@ func main() {
 	if len(os.Args) <= 1 {
 		log.Fatal("rename-by-mdate takes the root directory path in parameter")
 	} else {
+		dirName := ""
 		dirPath := os.Args[1]
 		currentTimeStamp := strconv.FormatInt(time.Now().UnixNano(), 10)
 
-		renameFiles(dirPath, currentTimeStamp)
+		if len(os.Args) == 3 {
+			dirName = os.Args[2]
+		}
+		renameFiles(dirPath, dirName, currentTimeStamp)
 	}
 }
 
-func renameFiles(dirPath string, currentTimeStamp string) {
+func renameFiles(dirPath string, dirName string, currentTimeStamp string) {
 	file, err := os.Open(dirPath)
 	if err != nil {
 		log.Fatalf("Failed opening directory: %s", err)
@@ -35,8 +39,10 @@ func renameFiles(dirPath string, currentTimeStamp string) {
 	defer file.Close()
 
 	// Get the directory name
-	i := strings.LastIndex(dirPath, pathSeparatorStr)
-	dirName := dirPath[i+1 : len(dirPath)]
+	if dirName == "" {
+		i := strings.LastIndex(dirPath, pathSeparatorStr)
+		dirName = dirPath[i+1 : len(dirPath)]
+	}
 
 	list, _ := file.Readdirnames(0) // 0 to read all files and folders
 	n := 0
