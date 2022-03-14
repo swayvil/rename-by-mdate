@@ -17,22 +17,23 @@ const (
 )
 
 func main() {
-	if len(os.Args) <= 1 {
-		log.Fatal("rename-by-mdate takes the root directory path in parameter")
+	if len(os.Args) <= 2 {
+		log.Fatal("usage: rename-by-mdate <source directory path> <target directory path> [optional suffix]")
 	} else {
 		dirName := ""
-		dirPath := os.Args[1]
+		srcDirPath := os.Args[1]
 		currentTimeStamp := strconv.FormatInt(time.Now().UnixNano(), 10)
+		destDirPath := os.Args[2]
 
-		if len(os.Args) == 3 {
-			dirName = os.Args[2]
+		if len(os.Args) == 4 {
+			dirName = os.Args[3]
 		}
-		renameFiles(dirPath, dirName, currentTimeStamp)
+		renameFiles(srcDirPath, dirName, currentTimeStamp, destDirPath)
 	}
 }
 
-func renameFiles(dirPath string, dirName string, currentTimeStamp string) {
-	file, err := os.Open(dirPath)
+func renameFiles(srcDirPath string, dirName string, currentTimeStamp string, destDirPath string) {
+	file, err := os.Open(srcDirPath)
 	if err != nil {
 		log.Fatalf("Failed opening directory: %s", err)
 	}
@@ -40,20 +41,20 @@ func renameFiles(dirPath string, dirName string, currentTimeStamp string) {
 
 	// Get the directory name
 	if dirName == "" {
-		i := strings.LastIndex(dirPath, pathSeparatorStr)
-		dirName = dirPath[i+1 : len(dirPath)]
+		i := strings.LastIndex(srcDirPath, pathSeparatorStr)
+		dirName = srcDirPath[i+1 : len(srcDirPath)]
 	}
 
 	list, _ := file.Readdirnames(0) // 0 to read all files and folders
 	n := 0
 	for _, filename := range list {
-		renameFile(dirPath+pathSeparatorStr, filename, dirName+"_", currentTimeStamp+"-"+strconv.Itoa(n))
+		renameFile(srcDirPath, destDirPath, filename, "_"+dirName, currentTimeStamp+"-"+strconv.Itoa(n))
 		n++
 	}
 }
 
-func renameFile(dirPath string, filename string, prefix string, tmpFileName string) {
-	filePath := dirPath + filename
+func renameFile(srcDirPath string, destDirPath string, filename string, suffix string, tmpFileName string) {
+	filePath := filepath.Join(srcDirPath, filename)
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -75,12 +76,17 @@ func renameFile(dirPath string, filename string, prefix string, tmpFileName stri
 		log.Fatal(err)
 	}
 	tm := time.Unix(st.Mtimespec.Sec, 0)
-	newFilename := prefix + tm.Format(timeFormat) + strings.ToLower(filepath.Ext(filePath))
+	newFilename := tm.Format(timeFormat) + suffix + strings.ToLower(filepath.Ext(filePath))
 
-	os.Rename(filePath, dirPath+tmpFileName) // Rename to a temporary filename, so we are sure nameIfFileExists won't match with the file if it is already well named
+	os.Rename(filePath, srcDirPath+tmpFileName) // Rename to a temporary filename, so we are sure nameIfFileExists won't match with the file if it is already well named
 
-	newFilePath := nameIfFileExists(dirPath + newFilename)
-	os.Rename(dirPath+tmpFileName, newFilePath)
+	newPathDir := filepath.Join(destDirPath, strconv.Itoa(tm.Year()))
+	if err := os.MkdirAll(newPathDir, os.ModePerm); err != nil {
+		log.Fatal(err)
+	}
+
+	newFilePath := nameIfFileExists(filepath.Join(newPathDir, newFilename))
+	os.Rename(srcDirPath+tmpFileName, newFilePath)
 	fmt.Println(newFilePath)
 }
 
