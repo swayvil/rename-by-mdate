@@ -25,13 +25,13 @@ Images are renamed with the date-time of the file, suffixed by the folder name:
 ```
 » ls -l ~/Pictures/holidays
 total 16464
--rw-r--r--@ 1 swayvil  staff  1816906 29 jui 16:00 holidays_2020-06-29_16.00.05.jpeg
--rw-r--r--@ 1 swayvil  staff  1803723 29 jui 16:00 holidays_2020-06-29_16.00.06.jpeg
--rw-r--r--@ 1 swayvil  staff  1811887 29 jui 16:00 holidays_2020-06-29_16.00.08.jpeg
--rw-r--r--@ 1 swayvil  staff  2488200 29 jui 16:00 holidays_2020-06-29_16.00.08_1.jpeg
+-rw-r--r--@ 1 swayvil  staff  1816906 29 jui 16:00 2020-06-29_16.00.05_holidays.jpeg
+-rw-r--r--@ 1 swayvil  staff  1803723 29 jui 16:00 2020-06-29_16.00.06_holidays.jpeg
+-rw-r--r--@ 1 swayvil  staff  1811887 29 jui 16:00 2020-06-29_16.00.08_holidays.jpeg
+-rw-r--r--@ 1 swayvil  staff  2488200 29 jui 16:00 2020-06-29_16.00.08_holidays_1.jpeg
 ```
 
-Optionaly, we can run "rename-by-mdate" with a suffix:
+Optionaly, "rename-by-mdate" can be run with a suffix:
 ```
 » ./rename-by-mdate ~/Pictures/holidays ~/Pictures/timeline family
 ```
@@ -41,10 +41,10 @@ Images are renamed with the date-time of the file, followed by the suffix:
 ```
 » ls -l ~/Pictures/timeline
 total 16464
--rw-r--r--@ 1 swayvil  staff  1816906 29 jui 16:00 family_2020-06-29_16.00.05.jpeg
--rw-r--r--@ 1 swayvil  staff  1803723 29 jui 16:00 family_2020-06-29_16.00.06.jpeg
--rw-r--r--@ 1 swayvil  staff  1811887 29 jui 16:00 family_2020-06-29_16.00.08.jpeg
--rw-r--r--@ 1 swayvil  staff  2488200 29 jui 16:00 family_2020-06-29_16.00.08_1.jpeg
+-rw-r--r--@ 1 swayvil  staff  1816906 29 jui 16:00 2020-06-29_16.00.05_family.jpeg
+-rw-r--r--@ 1 swayvil  staff  1803723 29 jui 16:00 2020-06-29_16.00.06_family.jpeg
+-rw-r--r--@ 1 swayvil  staff  1811887 29 jui 16:00 2020-06-29_16.00.08_family.jpeg
+-rw-r--r--@ 1 swayvil  staff  2488200 29 jui 16:00 2020-06-29_16.00.08_family_1.jpeg
 ```
 
 ## Useful Linux commands
