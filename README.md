@@ -47,6 +47,9 @@ total 16464
 -rw-r--r--@ 1 swayvil  staff  2488200 29 jui 16:00 2020-06-29_16.00.08_family_1.jpeg
 ```
 
+## Remove duplicate files
+See [check-duplicate-files](https://github.com/swayvil/check-duplicate-files)
+
 ## Useful Linux commands
 ### Copy files to a server and keep the timestamps
 ```
