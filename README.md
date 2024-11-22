@@ -51,7 +51,12 @@ total 16464
 See [check-duplicate-files](https://github.com/swayvil/check-duplicate-files)
 
 ## Useful Linux commands
-### Copy files to a server and keep the timestamps
+### Copy files and preserve timestamps
+To a local folder:
+```
+cp -p <source> <target>
+```
+To a server:
 ```
 rsync -a -P -e "ssh -t -p <PORT>" /local/path <USER>@<HOST>:/target/path
 ```
